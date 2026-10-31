@@ -1,3 +1,9 @@
+## [1.2.0-dev.1](https://github.com/TheDefaultState/meowdoku-patches/compare/v1.1.0...v1.2.0-dev.1) (2026-10-31)
+
+### ✨ New Features
+
+* block interstitial and app-open ads ([892c673](https://github.com/TheDefaultState/meowdoku-patches/commit/892c673d6cd98cc150bbfd3d792cc0826aea45b2))
+
 ## [1.1.0](https://github.com/TheDefaultState/meowdoku-patches/compare/v1.0.2...v1.1.0) (2026-10-31)
 
 ### ✨ New Features
