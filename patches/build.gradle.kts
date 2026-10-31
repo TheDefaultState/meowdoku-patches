@@ -1,17 +1,17 @@
-group = "app.template"
+group = "com.tds.meowdoku.patches"
 
 patches {
-    // TODO: Update this section with your project details.
     about {
-        name = "UserXYZ Patches"
-        description = "Patches for apps I like"
-        source = "git@github.com:UserXYZ/morphe-patches.git"
-        author = "Awesome dev"
+        name = "tds Meowdoku Patches"
+        description = "Patches for Meowdoku"
+        source = "git@github.com:TheDefaultState/meowdoku-patches.git"
+        author = "tds"
         contact = "na"
         website = "na"
         license = "GPLv3"
     }
 }
+
 
 // Separate configuration so gson is available at runtime for the
 // generatePatchesList task but never bundled into the APK.
