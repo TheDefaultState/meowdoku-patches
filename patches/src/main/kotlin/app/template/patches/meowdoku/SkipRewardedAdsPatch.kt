@@ -5,14 +5,14 @@ import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.booleanOption
 import app.morphe.patcher.patch.bytecodePatch
-import app.morphe.patcher.util.method.addInstructions
+import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 
 private const val HELPER = "Lapp/template/extension/RewardAdSkipper;"
 
 val COMPATIBILITY_MEOWDOKU = Compatibility(
     name = "Meowdoku",
     packageName = "com.oakever.meowdoku",
-    appIconColor = 0xFFF2C879,
+    appIconColor = 0xFFF2C879.toInt(),
     targets = listOf(AppTarget(version = "1.22.1"))
 )
 
@@ -31,15 +31,15 @@ val skipRewardedAdsPatch = bytecodePatch(
 
     extendWith("extensions/extension.mpe")
 
-    val skipUnityAds by booleanOption(name = "Skip Unity Ads", default = true)
-    val skipAppLovin by booleanOption(name = "Skip AppLovin MAX", default = true)
-    val skipIronSource by booleanOption(name = "Skip ironSource / LevelPlay", default = true)
-    val skipAdMob by booleanOption(name = "Skip AdMob", default = true)
+    val skipUnityAds by booleanOption(key = "Skip Unity Ads", default = true)
+    val skipAppLovin by booleanOption(key = "Skip AppLovin MAX", default = true)
+    val skipIronSource by booleanOption(key = "Skip ironSource / LevelPlay", default = true)
+    val skipAdMob by booleanOption(key = "Skip AdMob", default = true)
 
     execute {
         val matched = mutableListOf<String>()
 
-        if (skipUnityAds) {
+        if (skipUnityAds == true) {
             UnityAdsShowFingerprint.matchOrNull()?.let {
                 it.method.addInstructions(
                     0,
@@ -52,7 +52,7 @@ val skipRewardedAdsPatch = bytecodePatch(
             }
         }
 
-        if (skipAppLovin) {
+        if (skipAppLovin == true) {
             MaxRewardedShowFingerprint.matchOrNull()?.let {
                 it.method.addInstructions(
                     0,
@@ -65,7 +65,7 @@ val skipRewardedAdsPatch = bytecodePatch(
             }
         }
 
-        if (skipIronSource) {
+        if (skipIronSource == true) {
             IronSourceListenerFingerprint.matchOrNull()?.let {
                 it.method.addInstructions(
                     0,
@@ -85,7 +85,7 @@ val skipRewardedAdsPatch = bytecodePatch(
             }
         }
 
-        if (skipAdMob) {
+        if (skipAdMob == true) {
             AdmobRewardedShowFingerprint.matchOrNull()?.let {
                 it.method.addInstructions(
                     0,
