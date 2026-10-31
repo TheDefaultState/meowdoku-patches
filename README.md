@@ -19,9 +19,9 @@ Click the button below, or manually add this repo url to Morphe Manager: https:/
 ## 🩹 Patches list
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.2.1](https://github.com/TheDefaultState/meowdoku-patches/releases/tag/v1.2.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;4 patches total
+> **[v1.3.0-dev.1](https://github.com/TheDefaultState/meowdoku-patches/releases/tag/v1.3.0-dev.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;5 patches total
 <details open>
-<summary>📦 Meowdoku&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
+<summary>📦 Meowdoku&nbsp;&nbsp;•&nbsp;&nbsp;4 patches</summary>
 <br>
 
 **Package name:** `com.oakever.meowdoku`
@@ -33,6 +33,7 @@ Click the button below, or manually add this repo url to Morphe Manager: https:/
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
 |----------|----------------|-----------|
+| [Block banner and native ads](#block-banner-and-native-ads) | Skips banner and native ads entirely and collapses their space in the UI. | • Block banner and native ads |
 | [Block interstitial and app-open ads](#block-interstitial-and-app-open-ads) | Skips the full-screen ads between levels and the ones shown when the app opens. | • Block interstitial ads |
 | [Block rewarded ads](#block-rewarded-ads) | Blocks rewarded ads, keeps the button visible without a loaded ad and grants the reward instantly. | • Block rewarded ads |
 | [Block telemetry](#block-telemetry) | Stops AppsFlyer, Firebase Analytics and Facebook App Events from being started or sent anything. | • Block telemetry |
