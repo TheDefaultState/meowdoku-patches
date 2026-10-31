@@ -1,3 +1,9 @@
+## [1.2.1-dev.1](https://github.com/TheDefaultState/meowdoku-patches/compare/v1.2.0...v1.2.1-dev.1) (2026-10-31)
+
+### 🐛 Bug Fixes
+
+* keep the reward button and grant rewards without a loaded ad ([e983ea6](https://github.com/TheDefaultState/meowdoku-patches/commit/e983ea64ad900228f75d69e7d834b931fc9986e4))
+
 ## [1.2.0](https://github.com/TheDefaultState/meowdoku-patches/compare/v1.1.0...v1.2.0) (2026-10-31)
 
 ### ✨ New Features

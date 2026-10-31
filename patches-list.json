@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.2.0",
+  "version": "1.2.1-dev.1",
   "patches": [
     {
       "name": "Block interstitial and app-open ads",
@@ -41,7 +41,7 @@
     },
     {
       "name": "Block rewarded ads",
-      "description": "Blocks rewarded ads and reports them as watched, so retries and rewards are granted instantly.",
+      "description": "Blocks rewarded ads, keeps the button visible without a loaded ad and grants the reward instantly.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -68,7 +68,7 @@
         {
           "key": "Block rewarded ads",
           "title": null,
-          "description": "Skip the ad and grant the reward right away.",
+          "description": "Skip the ad, keep the button visible and grant the reward right away.",
           "required": false,
           "type": "kotlin.Boolean",
           "default": true,
