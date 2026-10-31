@@ -1,3 +1,9 @@
+## [1.3.2-dev.1](https://github.com/TheDefaultState/meowdoku-patches/compare/v1.3.1...v1.3.2-dev.1) (2026-10-31)
+
+### 🐛 Bug Fixes
+
+* reach the non-public notify methods when faking a reward ([e4168d1](https://github.com/TheDefaultState/meowdoku-patches/commit/e4168d16936b7af156976e4fb3f4818f7d48c83d))
+
 ## [1.3.1](https://github.com/TheDefaultState/meowdoku-patches/compare/v1.3.0...v1.3.1) (2026-10-31)
 
 ### 🐛 Bug Fixes
