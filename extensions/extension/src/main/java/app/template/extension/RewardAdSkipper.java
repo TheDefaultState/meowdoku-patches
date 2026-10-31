@@ -149,36 +149,38 @@ public final class RewardAdSkipper {
 
     /** Calls the first method of that name with a matching parameter count. */
     private static void call(Object target, String name, Object placement, Object ctx, Object... extra) {
-        Object[] wanted = new Object[extra.length + (ctx == null ? 1 : 2)];
-        // Build the argument list from the method signature instead of guessing the order.
-        for (Method method : target.getClass().getMethods()) {
-            if (!method.getName().equals(name)) continue;
-            Class<?>[] types = method.getParameterTypes();
-            Object[] args = new Object[types.length];
-            boolean ok = true;
-            for (int i = 0; i < types.length; i++) {
-                Class<?> type = types[i];
-                if (type == String.class) {
-                    args[i] = placement;
-                } else if (type == boolean.class) {
-                    args[i] = Boolean.TRUE;
-                } else if (type.getName().equals("android.os.Bundle")) {
-                    args[i] = extra[extra.length - 1];
-                } else if (type.isInstance(ctx)) {
-                    args[i] = ctx;
-                } else {
-                    ok = false;
-                    break;
+        // The notify methods are not public, so getMethods() alone misses them: walk the
+        // hierarchy with getDeclaredMethod and force accessibility.
+        for (Class<?> c = target.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+            for (Method method : c.getDeclaredMethods()) {
+                if (!method.getName().equals(name)) continue;
+                Class<?>[] types = method.getParameterTypes();
+                Object[] args = new Object[types.length];
+                boolean ok = true;
+                for (int i = 0; i < types.length; i++) {
+                    Class<?> type = types[i];
+                    if (type == String.class) {
+                        args[i] = placement;
+                    } else if (type == boolean.class) {
+                        args[i] = Boolean.TRUE;
+                    } else if (type.getName().equals("android.os.Bundle")) {
+                        args[i] = extra[extra.length - 1];
+                    } else if (ctx != null && type.isInstance(ctx)) {
+                        args[i] = ctx;
+                    } else {
+                        ok = false;
+                        break;
+                    }
                 }
+                if (!ok) continue;
+                try {
+                    method.setAccessible(true);
+                    method.invoke(target, args);
+                } catch (Throwable t) {
+                    Log.w(TAG, "call " + name + " failed", t);
+                }
+                return;
             }
-            if (!ok) continue;
-            try {
-                method.setAccessible(true);
-                method.invoke(target, args);
-            } catch (Throwable t) {
-                Log.w(TAG, "call " + name + " failed", t);
-            }
-            return;
         }
         Log.d(TAG, "no method " + name + " on " + target.getClass().getSimpleName());
     }
