@@ -102,6 +102,14 @@ internal object MaxAdapterLoadNativeFingerprint : Fingerprint(
     )
 )
 
+internal object MaxAdapterIsValidFingerprint : Fingerprint(
+    definingClass = "Lcom/meevii/adsdk/mediation/applovinmax/MaxAdapter;",
+    name = "isValid",
+    isStatic = false,
+    returnType = "Z",
+    parameters = listOf("Ljava/lang/String;")
+)
+
 /**
  * The game asks the ad wrapper whether the rewarded ad is usable before it offers the
  * button; the wrapper forwards to `MaxRewardedAd.isReady()`. Forcing this true keeps the

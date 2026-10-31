@@ -60,6 +60,19 @@ val skipRewardedAdsPatch = bytecodePatch(
             """
         )
 
+        // The real gate. The app SDK only asks the wrapper when a cached ad exists at all:
+        // MaxAdapter.isValid(placement) looks it up in mCachedAdMap and answers false when it
+        // is absent, so without this the button stays hidden and the wrapper hook never runs.
+        val adapterValid = MaxAdapterIsValidFingerprint.matchOrNull()
+            ?: throw PatchException("MaxAdapter.isValid(String) was not found; re-check the ad wrapper.")
+        adapterValid.method.addInstructions(
+            0,
+            """
+                const/4 v0, 0x1
+                return v0
+            """
+        )
+
         val show = MaxAdapterShowRewardedFingerprint.matchOrNull()
             ?: throw PatchException(
                 "MaxAdapter.doShowRewardedAd(String, TrackingContext, MaxRewardedAd) was not found. " +
