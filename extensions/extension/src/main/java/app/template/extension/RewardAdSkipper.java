@@ -167,6 +167,10 @@ public final class RewardAdSkipper {
                         args[i] = extra[extra.length - 1];
                     } else if (ctx != null && type.isInstance(ctx)) {
                         args[i] = ctx;
+                    } else if (ctx == null && !type.isPrimitive()) {
+                        // Nothing was cached, so the SDK handed over a null tracking context:
+                        // pass null rather than rejecting the whole method.
+                        args[i] = null;
                     } else {
                         ok = false;
                         break;
