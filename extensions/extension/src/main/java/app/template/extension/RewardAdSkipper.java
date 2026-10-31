@@ -19,7 +19,18 @@ import java.util.Set;
  */
 public final class RewardAdSkipper {
     private static final String TAG = "MeowdokuSkipAds";
-    private static final String LISTENER = "com.applovin.mediation.MaxRewardedAdListener";
+
+    /**
+     * Listener interfaces an ad can carry. MAX types the setter loosely (interstitials and
+     * app-open ads take a plain MaxAdListener), so the shared callbacks live on the parent
+     * interface and every concrete one has to be accepted.
+     */
+    private static final String[] LISTENERS = {
+            "com.applovin.mediation.MaxRewardedAdListener",
+            "com.applovin.mediation.MaxInterstitialAdListener",
+            "com.applovin.mediation.MaxAppOpenAdListener",
+            "com.applovin.mediation.MaxAdListener"
+    };
 
     /** Callbacks of a real MAX rewarded ad, in the order they arrive. */
     private static final String[] CALLBACKS = {"onAdDisplayed", "onUserRewarded", "onAdHidden"};
@@ -96,6 +107,16 @@ public final class RewardAdSkipper {
     private static Object findListener(Object target, Set<Class<?>> visited, int depth) {
         if (target == null || depth > 3 || !visited.add(target.getClass())) return null;
 
+        // MAX stores the listener the app registered in a field called adListener, that is
+        // the one to call; the impl's own wrapper sits in other fields and only forwards.
+        for (Class<?> c = target.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+            for (Field field : c.getDeclaredFields()) {
+                if (!"adListener".equals(field.getName())) continue;
+                Object value = read(field, target);
+                if (value != null && isListener(value.getClass())) return value;
+            }
+        }
+
         for (Class<?> c = target.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
             for (Field field : c.getDeclaredFields()) {
                 Object value = read(field, target);
@@ -126,7 +147,9 @@ public final class RewardAdSkipper {
 
     private static boolean isListener(Class<?> type) {
         if (type == null) return false;
-        if (LISTENER.equals(type.getName())) return true;
+        for (String listener : LISTENERS) {
+            if (listener.equals(type.getName())) return true;
+        }
         for (Class<?> iface : type.getInterfaces()) {
             if (isListener(iface)) return true;
         }

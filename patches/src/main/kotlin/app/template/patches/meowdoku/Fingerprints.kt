@@ -21,3 +21,25 @@ internal object MaxRewardedShowFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf("Landroid/app/Activity;")
 )
+
+/**
+ * Full-screen ads shown between levels (interstitial) and when the app comes back
+ * (app open). Both go through the same MAX entry point pattern as the rewarded ad:
+ * `MaxAdapter.doShowInterstitialAd` calls `showAd(Activity)` and `doShowAppOpenAd`
+ * calls the no-argument `showAd()`, both concrete with a body.
+ */
+internal object MaxInterstitialShowFingerprint : Fingerprint(
+    definingClass = "Lcom/applovin/mediation/ads/MaxInterstitialAd;",
+    name = "showAd",
+    isStatic = false,
+    returnType = "V",
+    parameters = listOf("Landroid/app/Activity;")
+)
+
+internal object MaxAppOpenShowFingerprint : Fingerprint(
+    definingClass = "Lcom/applovin/mediation/ads/MaxAppOpenAd;",
+    name = "showAd",
+    isStatic = false,
+    returnType = "V",
+    parameters = listOf()
+)
