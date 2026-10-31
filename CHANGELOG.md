@@ -1,3 +1,9 @@
+## [1.0.1-dev.1](https://github.com/TheDefaultState/meowdoku-patches/compare/v1.0.0...v1.0.1-dev.1) (2026-10-31)
+
+### 🐛 Bug Fixes
+
+* hook AppLovin MAX showAd and collapse the options into one ([2df543e](https://github.com/TheDefaultState/meowdoku-patches/commit/2df543e959176247095fda24a1a5f2674e29b4a1))
+
 ## 1.0.0 (2026-10-31)
 
 ### ✨ New Features
