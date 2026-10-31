@@ -99,6 +99,90 @@ public final class RewardAdSkipper {
         return isMaxAd(type.getSuperclass());
     }
 
+    /**
+     * Hooked at the head of {@code MaxMediationAdapter.showRewardedAd} path: the app asked to
+     * show a rewarded ad. Fakes the whole lifecycle on the adapter so it works even when no
+     * ad is loaded at all (network blocked), which the listener-driven path cannot do.
+     *
+     * @param adapter   the {@code MaxAdapter}
+     * @param placement the ad unit id
+     * @param ctx       the tracking context
+     * @param ad        the {@code MaxRewardedAd}, may be null when nothing is loaded
+     */
+    public static void rewardedClick(Object adapter, String placement, Object ctx, Object ad) {
+        if (adapter == null) return;
+        try {
+            Object bundle = callbackBundle(adapter, placement, ad);
+            // Same order the MAX listener produces for a real, fully watched ad.
+            call(adapter, "notifyCallAdShow", placement, ctx, Boolean.TRUE, bundle);
+            call(adapter, "notifyRewardedVideoCompleted", placement, ctx, bundle);
+            call(adapter, "notifyAdClose", placement, ctx, bundle);
+        } catch (Throwable t) {
+            Log.w(TAG, "rewardedClick", t);
+        }
+    }
+
+    /** The callback bundle the SDK builds for real callbacks, or an empty one. */
+    private static Object callbackBundle(Object adapter, String placement, Object ad) {
+        try {
+            Class<?> utils = Class.forName("com.meevii.adsdk.mediation.applovinmax.Utils");
+            Method builder = utils.getDeclaredMethod(
+                    "getMediationCallbackBundle", android.content.Context.class,
+                    Class.forName("com.applovin.mediation.MaxAd"), String.class);
+            Object context = invokeNoArg(adapter, "getApplicationCtx");
+            Object bundle = builder.invoke(null, context, ad, placement);
+            if (bundle != null) return bundle;
+        } catch (Throwable ignored) {
+        }
+        return new android.os.Bundle();
+    }
+
+    private static Object invokeNoArg(Object target, String name) {
+        try {
+            Method method = target.getClass().getMethod(name);
+            method.setAccessible(true);
+            return method.invoke(target);
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    /** Calls the first method of that name with a matching parameter count. */
+    private static void call(Object target, String name, Object placement, Object ctx, Object... extra) {
+        Object[] wanted = new Object[extra.length + (ctx == null ? 1 : 2)];
+        // Build the argument list from the method signature instead of guessing the order.
+        for (Method method : target.getClass().getMethods()) {
+            if (!method.getName().equals(name)) continue;
+            Class<?>[] types = method.getParameterTypes();
+            Object[] args = new Object[types.length];
+            boolean ok = true;
+            for (int i = 0; i < types.length; i++) {
+                Class<?> type = types[i];
+                if (type == String.class) {
+                    args[i] = placement;
+                } else if (type == boolean.class) {
+                    args[i] = Boolean.TRUE;
+                } else if (type.getName().equals("android.os.Bundle")) {
+                    args[i] = extra[extra.length - 1];
+                } else if (type.isInstance(ctx)) {
+                    args[i] = ctx;
+                } else {
+                    ok = false;
+                    break;
+                }
+            }
+            if (!ok) continue;
+            try {
+                method.setAccessible(true);
+                method.invoke(target, args);
+            } catch (Throwable t) {
+                Log.w(TAG, "call " + name + " failed", t);
+            }
+            return;
+        }
+        Log.d(TAG, "no method " + name + " on " + target.getClass().getSimpleName());
+    }
+
     /** The listener sits a few fields deep, so walk the object graph a bounded distance. */
     private static Object findListener(Object target) {
         return findListener(target, new HashSet<Class<?>>(), 0);

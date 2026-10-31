@@ -18,17 +18,22 @@ val COMPATIBILITY_MEOWDOKU = Compatibility(
 )
 
 /**
- * Rewarded ads are never shown, but the app receives the callbacks it gets after a
- * fully watched ad, so "watch an ad to retry / to get a reward" resolves instantly.
+ * Rewarded ads are never shown, but the app receives the callbacks of a fully watched ad,
+ * so "watch an ad to retry / to get a reward" resolves instantly.
  *
- * One hook is enough: every rewarded ad of this app is shown through the same MAX call,
- * including the ones Unity Ads, ironSource or AdMob fill as MAX adapters.
+ * Two hooks:
+ * - `MaxAdWrapper.isValid()` always reports true, so the game offers the button even when no
+ *   ad could ever be loaded (blocked network, no fill). Stock behaviour hides the button in
+ *   that case.
+ * - `MaxAdapter.doShowRewardedAd` is taken over completely and drives the adapter's own
+ *   notify methods, which is what MAX's listener would do. This works with no ad loaded at
+ *   all, where the plain `showAd` hook could not: it needs a live ad to hand a listener to.
  *
- * Only the parameter register is referenced, so .registers never has to be changed.
+ * Only parameter registers are used, so `.registers` never has to change.
  */
 val skipRewardedAdsPatch = bytecodePatch(
     name = "Block rewarded ads",
-    description = "Blocks rewarded ads and reports them as watched, so retries and rewards are granted instantly.",
+    description = "Blocks rewarded ads, keeps the button visible without a loaded ad and grants the reward instantly.",
     default = true
 ) {
     compatibleWith(COMPATIBILITY_MEOWDOKU)
@@ -37,7 +42,7 @@ val skipRewardedAdsPatch = bytecodePatch(
 
     val blockRewardedAds by booleanOption(
         key = "Block rewarded ads",
-        description = "Skip the ad and grant the reward right away.",
+        description = "Skip the ad, keep the button visible and grant the reward right away.",
         default = true
     )
 
@@ -45,20 +50,29 @@ val skipRewardedAdsPatch = bytecodePatch(
         // With the option off the app keeps its stock behaviour.
         if (blockRewardedAds != true) return@execute
 
-        val match = MaxRewardedShowFingerprint.matchOrNull()
-            ?: throw PatchException(
-                "MaxRewardedAd.showAd(Activity) was not found. The AppLovin MAX version in this build " +
-                    "probably changed; re-check how the app shows rewarded ads."
-            )
-
-        match.method.addInstructions(
+        val valid = MaxRewardedValidFingerprint.matchOrNull()
+            ?: throw PatchException("MaxAdWrapper.isValid() was not found; re-check the ad wrapper.")
+        valid.method.addInstructions(
             0,
             """
-                invoke-static {p0}, $HELPER->maxAd(Ljava/lang/Object;)V
+                const/4 v0, 0x1
+                return v0
+            """
+        )
+
+        val show = MaxAdapterShowRewardedFingerprint.matchOrNull()
+            ?: throw PatchException(
+                "MaxAdapter.doShowRewardedAd(String, TrackingContext, MaxRewardedAd) was not found. " +
+                    "The app SDK version probably changed; re-check the rewarded flow."
+            )
+        show.method.addInstructions(
+            0,
+            """
+                invoke-static {p0, p1, p2, p3}, $HELPER->rewardedClick(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V
                 return-void
             """
         )
 
-        println("Block rewarded ads: hooked MaxRewardedAd.showAd(Activity).")
+        println("Block rewarded ads: the button stays visible and the reward is faked.")
     }
 }

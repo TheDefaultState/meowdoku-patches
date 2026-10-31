@@ -43,3 +43,32 @@ internal object MaxAppOpenShowFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf()
 )
+
+/**
+ * The game asks the ad wrapper whether the rewarded ad is usable before it offers the
+ * button; the wrapper forwards to `MaxRewardedAd.isReady()`. Forcing this true keeps the
+ * button on screen when nothing could be loaded.
+ */
+internal object MaxRewardedValidFingerprint : Fingerprint(
+    definingClass = "Lcom/meevii/adsdk/mediation/applovinmax/MaxAdWrapper;",
+    name = "isValid",
+    isStatic = false,
+    returnType = "Z",
+    parameters = listOf()
+)
+
+/**
+ * The app SDK's rewarded show entry: `MaxMediationAdapter.showRewardedAd` resolves the cached
+ * wrapper and calls this with the tracking context and the (possibly absent) ad.
+ */
+internal object MaxAdapterShowRewardedFingerprint : Fingerprint(
+    definingClass = "Lcom/meevii/adsdk/mediation/applovinmax/MaxAdapter;",
+    name = "doShowRewardedAd",
+    isStatic = false,
+    returnType = "V",
+    parameters = listOf(
+        "Ljava/lang/String;",
+        "Lcom/meevii/adsdk/common/TrackingContext;",
+        "Lcom/applovin/mediation/ads/MaxRewardedAd;"
+    )
+)
