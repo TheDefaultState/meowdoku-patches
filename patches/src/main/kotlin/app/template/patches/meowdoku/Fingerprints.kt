@@ -45,6 +45,64 @@ internal object MaxAppOpenShowFingerprint : Fingerprint(
 )
 
 /**
+ * The app SDK's remaining formats: banner and native. Neither has a user gesture to fake,
+ * so they are simply not loaded and their container is collapsed.
+ */
+internal object MaxAdapterShowBannerFingerprint : Fingerprint(
+    definingClass = "Lcom/meevii/adsdk/mediation/applovinmax/MaxAdapter;",
+    name = "doShowBannerAd",
+    isStatic = false,
+    returnType = "V",
+    parameters = listOf(
+        "Ljava/lang/String;",
+        "Lcom/meevii/adsdk/common/TrackingContext;",
+        "Lcom/applovin/mediation/ads/MaxAdView;",
+        "Landroid/view/ViewGroup;"
+    )
+)
+
+internal object MaxAdapterShowNativeFingerprint : Fingerprint(
+    definingClass = "Lcom/meevii/adsdk/mediation/applovinmax/MaxAdapter;",
+    name = "doShowNativeAd",
+    isStatic = false,
+    returnType = "V",
+    parameters = listOf(
+        "Ljava/lang/String;",
+        "Lcom/meevii/adsdk/common/TrackingContext;",
+        "Lcom/applovin/mediation/nativeAds/MaxNativeAdLoader;",
+        "Lcom/applovin/mediation/MaxAd;",
+        "Landroid/view/ViewGroup;",
+        "I"
+    )
+)
+
+internal object MaxAdapterLoadBannerFingerprint : Fingerprint(
+    definingClass = "Lcom/meevii/adsdk/mediation/applovinmax/MaxAdapter;",
+    name = "doLoadBannerAd",
+    isStatic = false,
+    returnType = "V",
+    parameters = listOf(
+        "Ljava/lang/String;",
+        "Lcom/meevii/adsdk/common/TrackingContext;",
+        "Lcom/meevii/adsdk/common/BannerSize;",
+        "Ljava/util/Map;"
+    )
+)
+
+internal object MaxAdapterLoadNativeFingerprint : Fingerprint(
+    definingClass = "Lcom/meevii/adsdk/mediation/applovinmax/MaxAdapter;",
+    name = "doLoadNativeAd",
+    isStatic = false,
+    // Returns the loader it would have built, so skipping yields null.
+    returnType = "Lcom/applovin/mediation/nativeAds/MaxNativeAdLoader;",
+    parameters = listOf(
+        "Ljava/lang/String;",
+        "Lcom/meevii/adsdk/common/TrackingContext;",
+        "Ljava/util/Map;"
+    )
+)
+
+/**
  * The game asks the ad wrapper whether the rewarded ad is usable before it offers the
  * button; the wrapper forwards to `MaxRewardedAd.isReady()`. Forcing this true keeps the
  * button on screen when nothing could be loaded.

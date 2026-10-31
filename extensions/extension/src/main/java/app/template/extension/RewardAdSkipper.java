@@ -183,6 +183,28 @@ public final class RewardAdSkipper {
         Log.d(TAG, "no method " + name + " on " + target.getClass().getSimpleName());
     }
 
+    /** Banner: nothing is loaded, so hide the ad view and its container. */
+    public static void hideBanner(Object adView, Object container) {
+        hide(adView);
+        hide(container);
+    }
+
+    /** Native: the SDK renders into the container the game handed over. */
+    public static void hideNative(Object container) {
+        hide(container);
+    }
+
+    /** Sets a view GONE by reflection, so the extension needs no android.view dependency. */
+    public static void hide(Object view) {
+        if (view == null) return;
+        try {
+            Method setVisibility = view.getClass().getMethod("setVisibility", int.class);
+            setVisibility.invoke(view, android.view.View.GONE);
+        } catch (Throwable t) {
+            // Not a View or already detached: leaving it visible is harmless.
+        }
+    }
+
     /** The listener sits a few fields deep, so walk the object graph a bounded distance. */
     private static Object findListener(Object target) {
         return findListener(target, new HashSet<Class<?>>(), 0);
