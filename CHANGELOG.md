@@ -1,3 +1,9 @@
+## [1.3.1](https://github.com/TheDefaultState/meowdoku-patches/compare/v1.3.0...v1.3.1) (2026-10-31)
+
+### 🐛 Bug Fixes
+
+* force the adapter's own validity check, not just the wrapper's ([ead3909](https://github.com/TheDefaultState/meowdoku-patches/commit/ead3909eae9327dde26058c4ee9fcbcf88f84886))
+
 ## [1.3.1-dev.1](https://github.com/TheDefaultState/meowdoku-patches/compare/v1.3.0...v1.3.1-dev.1) (2026-10-31)
 
 ### 🐛 Bug Fixes
