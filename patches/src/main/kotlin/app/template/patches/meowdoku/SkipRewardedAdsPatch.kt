@@ -12,7 +12,8 @@ private const val HELPER = "Lapp/template/extension/RewardAdSkipper;"
 val COMPATIBILITY_MEOWDOKU = Compatibility(
     name = "Meowdoku",
     packageName = "com.oakever.meowdoku",
-    appIconColor = 0xFFF2C879.toInt(),
+    // Plain 0xRRGGBB: Compatibility rejects any alpha byte, so 0xFFF2C879 throws.
+    appIconColor = 0xF2C879,
     targets = listOf(AppTarget(version = "1.22.1"))
 )
 
