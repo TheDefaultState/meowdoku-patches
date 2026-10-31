@@ -10,112 +10,115 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Fakes a completed rewarded ad.
+ * Fakes a completed rewarded ad for AppLovin MAX.
  *
- * The app passes its listener (a Java proxy backed by C# in Unity) into the SDK show() call.
- * We skip the SDK and invoke that listener ourselves, so the app sees the normal
- * "reward granted" + "ad closed" sequence and continues its retry flow.
+ * MAX is the mediation SDK this app shows every rewarded ad through, no matter which network
+ * fills it, and the app waits on the MaxRewardedAdListener it registered on the ad. That
+ * listener is looked up on the ad object, so the callbacks can be delivered in the order a
+ * real, fully watched ad would produce them: displayed, rewarded, hidden.
  */
 public final class RewardAdSkipper {
     private static final String TAG = "MeowdokuSkipAds";
+    private static final String LISTENER = "com.applovin.mediation.MaxRewardedAdListener";
 
-    private static final String[] REWARD = {
-            "onUserEarnedReward",
-            "onAdRewarded",
-            "onRewardedVideoAdRewarded",
-            "onRewarded",
-            "onReward"
-    };
-
-    private static final String[] DISMISS = {
-            "onAdDismissedFullScreenContent",
-            "onAdHidden",
-            "onRewardedVideoAdClosed",
-            "onAdClosed"
-    };
-
-    /** ironSource has no listener on show(), it is registered once up-front. */
-    private static Object ironSourceListener;
+    /** Callbacks of a real MAX rewarded ad, in the order they arrive. */
+    private static final String[] CALLBACKS = {"onAdDisplayed", "onUserRewarded", "onAdHidden"};
 
     private RewardAdSkipper() {}
 
-    public static void captureIronSourceListener(Object listener) {
-        ironSourceListener = listener;
-        Log.d(TAG, "captured ironSource listener");
-    }
-
-    public static void unityAds(String placementId, Object showListener) {
+    /**
+     * Hooked at the head of {@code MaxRewardedAd.showAd(Activity)}.
+     *
+     * @param ad the {@code MaxRewardedAd} the app just tried to show.
+     */
+    public static void maxAd(Object ad) {
         try {
-            // Unity wants onUnityAdsShowComplete(placement, COMPLETED) - one call covers reward + close.
-            invokeOne(showListener, "onUnityAdsShowComplete", placementId);
-        } catch (Throwable t) {
-            Log.w(TAG, "unityAds", t);
-        }
-    }
-
-    public static void maxAd(Object ad, String placementId, Object listener) {
-        try {
-            complete(listener, ad, placementId);
+            Object listener = findListener(ad);
+            if (listener == null) {
+                Log.d(TAG, "no MAX listener on the ad, app keeps its own flow");
+                return;
+            }
+            for (String callback : CALLBACKS) {
+                deliver(listener, ad, callback);
+            }
         } catch (Throwable t) {
             Log.w(TAG, "maxAd", t);
         }
     }
 
-    public static void ironSource() {
-        ironSource(null);
+    /** The listener sits a few fields deep, so walk the object graph a bounded distance. */
+    private static Object findListener(Object target) {
+        return findListener(target, new HashSet<Class<?>>(), 0);
     }
 
-    public static void ironSource(String placementId) {
+    private static Object findListener(Object target, Set<Class<?>> visited, int depth) {
+        if (target == null || depth > 3 || !visited.add(target.getClass())) return null;
+
+        for (Class<?> c = target.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+            for (Field field : c.getDeclaredFields()) {
+                Object value = read(field, target);
+                if (value != null && isListener(value.getClass())) return value;
+            }
+        }
+
+        // Not a direct field: follow AppLovin's own members (the impl object, wrappers, ...).
+        for (Class<?> c = target.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+            for (Field field : c.getDeclaredFields()) {
+                Object value = read(field, target);
+                if (value == null || !isAppLovin(value.getClass())) continue;
+                Object found = findListener(value, visited, depth + 1);
+                if (found != null) return found;
+            }
+        }
+        return null;
+    }
+
+    private static Object read(Field field, Object target) {
         try {
-            complete(ironSourceListener, null, placementId);
-        } catch (Throwable t) {
-            Log.w(TAG, "ironSource", t);
+            field.setAccessible(true);
+            return field.get(target);
+        } catch (Throwable ignored) {
+            return null;
         }
     }
 
-    public static void admob(Object ad, Object earnedListener) {
-        try {
-            complete(earnedListener, ad, null);
-            fireFromField(ad, "onAdDismissedFullScreenContent");
-        } catch (Throwable t) {
-            Log.w(TAG, "admob", t);
+    private static boolean isListener(Class<?> type) {
+        if (type == null) return false;
+        if (LISTENER.equals(type.getName())) return true;
+        for (Class<?> iface : type.getInterfaces()) {
+            if (isListener(iface)) return true;
         }
+        return isListener(type.getSuperclass());
     }
 
-    private static void complete(Object listener, Object ad, String placement) {
-        if (listener == null) {
-            Log.d(TAG, "no listener captured, app keeps its own flow");
-            return;
+    private static boolean isAppLovin(Class<?> type) {
+        for (Class<?> c = type; c != null && c != Object.class; c = c.getSuperclass()) {
+            if (c.getName().startsWith("com.applovin.")) return true;
         }
-        Set<String> called = new HashSet<>();
-        for (Method method : listenerMethods(listener)) {
-            String name = method.getName();
-            if (!contains(REWARD, name) && !contains(DISMISS, name)) continue;
-            if (!called.add(name)) continue;
-            invoke(listener, method, ad, placement);
-        }
+        return false;
     }
 
-    private static void invokeOne(Object listener, String name, String placement) {
-        if (listener == null) return;
+    /** Invokes every method of that name the listener declares, once per signature. */
+    private static void deliver(Object listener, Object ad, String name) {
+        Set<String> seen = new HashSet<>();
         for (Method method : listenerMethods(listener)) {
             if (!name.equals(method.getName())) continue;
-            invoke(listener, method, null, placement);
-            return;
+            if (!seen.add(method.toGenericString())) continue;
+            invoke(listener, method, buildArgs(method, ad));
         }
     }
 
-    private static void invoke(Object listener, Method method, Object ad, String placement) {
+    private static void invoke(Object listener, Method method, Object[] args) {
         try {
             method.setAccessible(true);
-            method.invoke(listener, buildArgs(method, ad, placement));
+            method.invoke(listener, args);
             Log.d(TAG, "invoked " + method.getName());
         } catch (Throwable t) {
             Log.w(TAG, "invoke " + method.getName() + " failed", t);
         }
     }
 
-    private static Object[] buildArgs(Method method, Object ad, String placement) {
+    private static Object[] buildArgs(Method method, Object ad) {
         Class<?>[] types = method.getParameterTypes();
         Object[] args = new Object[types.length];
         for (int i = 0; i < types.length; i++) {
@@ -123,10 +126,11 @@ public final class RewardAdSkipper {
             if (ad != null && type.isInstance(ad)) {
                 args[i] = ad;
             } else if (type == String.class) {
-                args[i] = placement == null ? "" : placement;
+                args[i] = "";
             } else if (type.isEnum()) {
                 args[i] = preferredConstant(type);
             } else if (type.isInterface()) {
+                // MaxReward and friends: a proxy answering with plausible defaults.
                 args[i] = stub(type);
             } else {
                 args[i] = instance(type);
@@ -197,30 +201,5 @@ public final class RewardAdSkipper {
         if (type == char.class) return ' ';
         if (type == String.class) return "";
         return null;
-    }
-
-    private static void fireFromField(Object target, String methodName) {
-        if (target == null) return;
-        for (Class<?> c = target.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
-            for (Field field : c.getDeclaredFields()) {
-                try {
-                    field.setAccessible(true);
-                    Object callback = field.get(target);
-                    if (callback == null) continue;
-                    for (Method method : listenerMethods(callback)) {
-                        if (methodName.equals(method.getName())) {
-                            invoke(callback, method, null, null);
-                            return;
-                        }
-                    }
-                } catch (Throwable ignored) {
-                }
-            }
-        }
-    }
-
-    private static boolean contains(String[] values, String value) {
-        for (String candidate : values) if (candidate.equals(value)) return true;
-        return false;
     }
 }

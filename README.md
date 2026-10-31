@@ -19,7 +19,24 @@ Click the button below, or manually add this repo url to Morphe Manager: https:/
 ## 🩹 Patches list
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.0.0](https://github.com/TheDefaultState/meowdoku-patches/releases/tag/v1.0.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;2 patches total
+> **[v1.0.1-dev.1](https://github.com/TheDefaultState/meowdoku-patches/releases/tag/v1.0.1-dev.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;2 patches total
+<details open>
+<summary>📦 Meowdoku&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
+
+**Package name:** `com.oakever.meowdoku`
+
+**🎯 Supported versions:**
+
+| 1.22.1 |
+| :---: |
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
+|----------|----------------|-----------|
+| [Block rewarded ads](#block-rewarded-ads) | Blocks rewarded ads and reports them as watched, so retries and rewards are granted instantly. | • Block rewarded ads |
+
+</details>
+
 <details open>
 <summary>📦 XYZ app&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -34,23 +51,6 @@ Click the button below, or manually add this repo url to Morphe Manager: https:/
 | 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
 |----------|----------------|-----------|
 | [Example Patch](#example-patch) | Example patch to start with. |  |
-
-</details>
-
-<details open>
-<summary>📦 Meowdoku&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
-<br>
-
-**Package name:** `com.oakever.meowdoku`
-
-**🎯 Supported versions:**
-
-| 1.22.1 |
-| :---: |
-
-| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
-|----------|----------------|-----------|
-| [Skip rewarded ads](#skip-rewarded-ads) | Skips rewarded ads and reports them as watched, so retries and rewards are granted instantly. | • Skip Unity Ads<br>• Skip AppLovin MAX<br>• Skip ironSource / LevelPlay<br>• Skip AdMob |
 
 </details>
 
