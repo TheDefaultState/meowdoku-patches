@@ -38,12 +38,54 @@ public final class RewardAdSkipper {
                 Log.d(TAG, "no MAX listener on the ad, app keeps its own flow");
                 return;
             }
+            // MAX callbacks take the internal mediated ad and MaxFullscreenAdImpl$b
+            // downcasts the argument to it, so the public MaxRewardedAd is the wrong object.
+            Object mediated = mediatedAd(ad);
+            Object argument = mediated != null ? mediated : ad;
             for (String callback : CALLBACKS) {
-                deliver(listener, ad, callback);
+                deliver(listener, argument, callback);
             }
         } catch (Throwable t) {
             Log.w(TAG, "maxAd", t);
         }
+    }
+
+    /**
+     * The mediated ad MAX itself passes to its listeners: an AppLovin-internal field value
+     * that is a MaxAd. Returns null when it cannot be found, the public ad is the fallback.
+     */
+    private static Object mediatedAd(Object ad) {
+        return mediatedAd(ad, new HashSet<Class<?>>(), 0);
+    }
+
+    private static Object mediatedAd(Object target, Set<Class<?>> visited, int depth) {
+        if (target == null || depth > 3 || !visited.add(target.getClass())) return null;
+        for (Class<?> c = target.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+            for (Field field : c.getDeclaredFields()) {
+                Object value = read(field, target);
+                if (value == null) continue;
+                if (!value.getClass().getName().startsWith("com.applovin.impl.")) continue;
+                if (isMaxAd(value.getClass())) return value;
+            }
+            // The mediated ad sits on AppLovin's impl object, one level below the public ad.
+            for (Field field : c.getDeclaredFields()) {
+                Object value = read(field, target);
+                if (value == null || !value.getClass().getName().startsWith("com.applovin.impl.")) continue;
+                Object found = mediatedAd(value, visited, depth + 1);
+                if (found != null) return found;
+            }
+        }
+        return null;
+    }
+
+    /** MaxAd check by name, so the extension needs no AppLovin dependency to compile. */
+    private static boolean isMaxAd(Class<?> type) {
+        if (type == null) return false;
+        if ("com.applovin.mediation.MaxAd".equals(type.getName())) return true;
+        for (Class<?> iface : type.getInterfaces()) {
+            if (isMaxAd(iface)) return true;
+        }
+        return isMaxAd(type.getSuperclass());
     }
 
     /** The listener sits a few fields deep, so walk the object graph a bounded distance. */
