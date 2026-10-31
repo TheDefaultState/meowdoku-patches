@@ -1,3 +1,9 @@
+## [1.3.3](https://github.com/TheDefaultState/meowdoku-patches/compare/v1.3.2...v1.3.3) (2026-10-31)
+
+### 🐛 Bug Fixes
+
+* tolerate a null tracking context when faking a reward ([b6a9631](https://github.com/TheDefaultState/meowdoku-patches/commit/b6a9631ff5f6beea28fa1ea674d4d5c25f2f211e))
+
 ## [1.3.3-dev.1](https://github.com/TheDefaultState/meowdoku-patches/compare/v1.3.2...v1.3.3-dev.1) (2026-10-31)
 
 ### 🐛 Bug Fixes
