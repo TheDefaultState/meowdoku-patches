@@ -1,3 +1,9 @@
+## [1.1.0-dev.1](https://github.com/TheDefaultState/meowdoku-patches/compare/v1.0.2...v1.1.0-dev.1) (2026-10-31)
+
+### ✨ New Features
+
+* add a patch that blocks the app's telemetry ([f2c569c](https://github.com/TheDefaultState/meowdoku-patches/commit/f2c569c3d0d58e44d0a6325db57ecb974983dea9))
+
 ## [1.0.2](https://github.com/TheDefaultState/meowdoku-patches/compare/v1.0.1...v1.0.2) (2026-10-31)
 
 ### 🐛 Bug Fixes
