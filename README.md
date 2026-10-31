@@ -19,9 +19,9 @@ Click the button below, or manually add this repo url to Morphe Manager: https:/
 ## 🩹 Patches list
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.0.2](https://github.com/TheDefaultState/meowdoku-patches/releases/tag/v1.0.2)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;2 patches total
+> **[v1.1.0-dev.1](https://github.com/TheDefaultState/meowdoku-patches/releases/tag/v1.1.0-dev.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;3 patches total
 <details open>
-<summary>📦 Meowdoku&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<summary>📦 Meowdoku&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
 <br>
 
 **Package name:** `com.oakever.meowdoku`
@@ -34,6 +34,7 @@ Click the button below, or manually add this repo url to Morphe Manager: https:/
 | 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
 |----------|----------------|-----------|
 | [Block rewarded ads](#block-rewarded-ads) | Blocks rewarded ads and reports them as watched, so retries and rewards are granted instantly. | • Block rewarded ads |
+| [Block telemetry](#block-telemetry) | Stops AppsFlyer, Firebase Analytics and Facebook App Events from being started or sent anything. | • Block telemetry |
 
 </details>
 

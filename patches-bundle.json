@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-31T18:25:19",
-  "description": "## [1.0.2](https://github.com/TheDefaultState/meowdoku-patches/compare/v1.0.1...v1.0.2) (2026-10-31)\n\n### 🐛 Bug Fixes\n\n* pass the mediated MAX ad to the reward callbacks ([fedc0f3](https://github.com/TheDefaultState/meowdoku-patches/commit/fedc0f391ffd1f41e62eea2026c865338859ce70))",
-  "download_url": "https://github.com/TheDefaultState/meowdoku-patches/releases/download/v1.0.2/patches-1.0.2.mpp",
+  "created_at": "2026-10-31T18:33:36",
+  "description": "## [1.1.0-dev.1](https://github.com/TheDefaultState/meowdoku-patches/compare/v1.0.2...v1.1.0-dev.1) (2026-10-31)\n\n### ✨ New Features\n\n* add a patch that blocks the app's telemetry ([f2c569c](https://github.com/TheDefaultState/meowdoku-patches/commit/f2c569c3d0d58e44d0a6325db57ecb974983dea9))",
+  "download_url": "https://github.com/TheDefaultState/meowdoku-patches/releases/download/v1.1.0-dev.1/patches-1.1.0-dev.1.mpp",
   "signature_download_url": "",
-  "version": "1.0.2"
+  "version": "1.1.0-dev.1"
 }

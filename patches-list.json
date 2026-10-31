@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.2",
+  "version": "1.1.0-dev.1",
   "patches": [
     {
       "name": "Block rewarded ads",
@@ -32,6 +32,43 @@
           "key": "Block rewarded ads",
           "title": null,
           "description": "Skip the ad and grant the reward right away.",
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        }
+      ]
+    },
+    {
+      "name": "Block telemetry",
+      "description": "Stops AppsFlyer, Firebase Analytics and Facebook App Events from being started or sent anything.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.oakever.meowdoku",
+          "name": "Meowdoku",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": "#F2C879",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "1.22.1",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "Block telemetry",
+          "title": null,
+          "description": "Keep the analytics SDKs from starting and drop every queued event.",
           "required": false,
           "type": "kotlin.Boolean",
           "default": true,
