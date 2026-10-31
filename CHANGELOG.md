@@ -1,3 +1,9 @@
+## [1.3.0](https://github.com/TheDefaultState/meowdoku-patches/compare/v1.2.1...v1.3.0) (2026-10-31)
+
+### ✨ New Features
+
+* block banner and native ads ([b1e851b](https://github.com/TheDefaultState/meowdoku-patches/commit/b1e851bc6f8928a82527731821694e63ffc29065))
+
 ## [1.3.0-dev.1](https://github.com/TheDefaultState/meowdoku-patches/compare/v1.2.1...v1.3.0-dev.1) (2026-10-31)
 
 ### ✨ New Features
