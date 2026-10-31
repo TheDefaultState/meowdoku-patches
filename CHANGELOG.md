@@ -1,3 +1,9 @@
+## [1.0.2-dev.1](https://github.com/TheDefaultState/meowdoku-patches/compare/v1.0.1...v1.0.2-dev.1) (2026-10-31)
+
+### 🐛 Bug Fixes
+
+* pass the mediated MAX ad to the reward callbacks ([fedc0f3](https://github.com/TheDefaultState/meowdoku-patches/commit/fedc0f391ffd1f41e62eea2026c865338859ce70))
+
 ## [1.0.1](https://github.com/TheDefaultState/meowdoku-patches/compare/v1.0.0...v1.0.1) (2026-10-31)
 
 ### 🐛 Bug Fixes
